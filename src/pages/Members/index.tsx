@@ -6,7 +6,9 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import { useMembers } from "@/hooks/useMembers";
+import { useMembers, useMember } from "@/hooks/useMembers";
+import SlidePanel from "@/components/common/SlidePanel";
+import MemberForm from "@/components/common/MemberForm";
 import { useMemberStore } from "@/stores/memberStore";
 import {
   MEMBER_GRADE_OPTIONS,
@@ -58,7 +60,11 @@ export default function Members() {
   const { data, isLoading, isError } = useMembers(filters);
 
   // !! Zustand로 패널 상태 관리
-  const { openPanel } = useMemberStore();
+  const { openPanel, closePanel, isPanelOpen, selectedMemberId } =
+    useMemberStore();
+
+  // !! 선택된 회원 단건 조회 (id 있을 때만 요청)
+  const { data: selectedMember } = useMember(selectedMemberId);
 
   // !! TanStack Table 컬럼 정의
   const columns = useMemo(
@@ -286,6 +292,15 @@ export default function Members() {
           </div>
         </div>
       </div>
+
+      {/* !! 패널 렌더링 (선택된 회원이 있을 때만) */}
+      <SlidePanel
+        isOpen={isPanelOpen}
+        onClose={closePanel}
+        title="회원 상세 / 수정"
+      >
+        {selectedMember && <MemberForm member={selectedMember} />}
+      </SlidePanel>
     </div>
   );
 }
