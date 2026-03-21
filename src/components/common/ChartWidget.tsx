@@ -1,6 +1,6 @@
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -8,7 +8,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// fake data
 const data = [
   { name: "1일", revenue: 4000 },
   { name: "2일", revenue: 3000 },
@@ -19,33 +18,70 @@ const data = [
   { name: "7일", revenue: 3490 },
 ];
 
+
 export default function ChartWidget() {
   return (
-    <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-      <h3 className="text-lg font-semibold mb-4">주간 매출 추이</h3>
-      <div className="h-64">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-base font-semibold text-gray-800">주간 매출 추이</h3>
+          <p className="text-xs text-gray-400 mt-0.5">최근 7일 기준</p>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+          <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
+          매출액
+        </div>
+      </div>
+      <div className="h-60">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="name" fontSize={12} tickMargin={10} />
+          <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis
+              dataKey="name"
+              fontSize={11}
+              tickMargin={10}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#94a3b8" }}
+            />
             <YAxis
-              fontSize={12}
-              tickFormatter={(value) => `${value}원`}
-              width={80}
+              fontSize={11}
+              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+              width={36}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#94a3b8" }}
             />
             <Tooltip
-              formatter={(value) => [`${Number(value).toLocaleString()}원`, "매출"]}
-              labelStyle={{ color: "#374151" }}
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                return (
+                  <div className="bg-slate-900 text-white text-xs rounded-xl px-3.5 py-2.5 shadow-xl">
+                    <p className="text-slate-400 mb-1">{String(label)}</p>
+                    <p className="font-bold text-sm">
+                      {Number(payload[0].value).toLocaleString()}원
+                    </p>
+                  </div>
+                );
+              }}
+              cursor={{ stroke: "#e2e8f0", strokeWidth: 1 }}
             />
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            stroke="#3b82f6"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
-          />
-          </LineChart>
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="#3b82f6"
+              strokeWidth={2.5}
+              fill="url(#revenueGradient)"
+              dot={false}
+              activeDot={{ r: 5, fill: "#3b82f6", strokeWidth: 2, stroke: "#fff" }}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
