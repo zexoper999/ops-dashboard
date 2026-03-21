@@ -1,0 +1,33 @@
+# .gitignore
+
+# 의존성
+node_modules/
+
+# 빌드 결과물
+dist/
+dist-ssr/
+
+# 환경변수
+.env
+.env.local
+.env.*.local
+
+# 로그
+*.log
+npm-debug.log*
+
+# 에디터
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MSW
+public/mockServiceWorker.js
