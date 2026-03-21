@@ -2,7 +2,7 @@ import { Bell, Search, Settings } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0 shadow-sm">
+    <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-10 shrink-0 shadow-sm">
       {/* 검색창 */}
       <div className="flex items-center gap-2.5 bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2 w-72 transition-all focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-sm">
         <Search size={15} className="text-gray-400 shrink-0" />
