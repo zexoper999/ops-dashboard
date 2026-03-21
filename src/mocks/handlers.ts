@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
-import type { Order } from "@/types";
+import type { Order, Member, MemberGrade, MemberStatus } from "@/types";
 
-// fake data 50개 생성
+// 주문 목업 데이터
 const mockOrders: Order[] = Array.from({ length: 50 }).map(() => ({
   id: faker.string.uuid(),
   customerName: faker.person.fullName(),
@@ -16,16 +16,52 @@ const mockOrders: Order[] = Array.from({ length: 50 }).map(() => ({
   createdAt: faker.date.recent({ days: 30 }).toISOString(),
 }));
 
+// 회원 목업 데이터 (100명)
+const mockMembers: Member[] = Array.from({ length: 100 }).map(() => ({
+  id: faker.string.uuid(),
+  name: faker.person.fullName(),
+  email: faker.internet.email(),
+  phone: `010-${faker.string.numeric(4)}-${faker.string.numeric(4)}`,
+  birthDate: faker.date
+    .birthdate({ min: 20, max: 60, mode: "age" })
+    .toISOString()
+    .split("T")[0],
+  gender: faker.helpers.arrayElement(["MALE", "FEMALE"]),
+  grade: faker.helpers.arrayElement<MemberGrade>([
+    "VIP",
+    "GOLD",
+    "SILVER",
+    "GENERAL",
+  ]),
+  status: faker.helpers.arrayElement<MemberStatus>([
+    "ACTIVE",
+    "DORMANT",
+    "SUSPENDED",
+  ]),
+  postcode: faker.location.zipCode(),
+  address: faker.location.streetAddress(),
+  addressDetail: faker.location.secondaryAddress(),
+  totalOrderCount: faker.number.int({ min: 0, max: 50 }),
+  totalOrderAmount: faker.number.int({ min: 0, max: 5000000 }),
+  lastOrderDate: faker.date.recent({ days: 90 }).toISOString(),
+  marketingAgree: faker.datatype.boolean(),
+  smsAgree: faker.datatype.boolean(),
+  emailAgree: faker.datatype.boolean(),
+  memo:
+    faker.helpers.maybe(() => faker.lorem.sentence(), { probability: 0.3 }) ??
+    "",
+  createdAt: faker.date.past({ years: 2 }).toISOString(),
+  updatedAt: faker.date.recent({ days: 30 }).toISOString(),
+}));
+
 export const handlers = [
-  // 주문 목록 조회 API
+  // 주문 목록
   http.get("/api/orders", ({ request }) => {
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page")) || 1;
     const limit = 10;
-
     const start = (page - 1) * limit;
-    const end = start + limit;
-    const paginatedOrders = mockOrders.slice(start, end);
+    const paginatedOrders = mockOrders.slice(start, start + limit);
 
     return HttpResponse.json({
       data: paginatedOrders,
@@ -35,11 +71,59 @@ export const handlers = [
     });
   }),
 
-  // 의도적인 에러 발생 API (나중에 Error Simulator에서 사용)
-  http.get("/api/error/500", () => {
-    return new HttpResponse(null, {
-      status: 500,
-      statusText: "Internal Server Error",
+  // 회원 목록
+  http.get("/api/members", ({ request }) => {
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get("page")) || 1;
+    const limit = 10;
+    const search = url.searchParams.get("search") || "";
+    const grade = url.searchParams.get("grade") || "";
+    const status = url.searchParams.get("status") || "";
+
+    // 필터 적용
+    let filtered = mockMembers;
+    if (search) {
+      filtered = filtered.filter(
+        (m) =>
+          m.name.toLowerCase().includes(search.toLowerCase()) ||
+          m.email.toLowerCase().includes(search.toLowerCase()) ||
+          m.phone.includes(search),
+      );
+    }
+    if (grade) filtered = filtered.filter((m) => m.grade === grade);
+    if (status) filtered = filtered.filter((m) => m.status === status);
+
+    const start = (page - 1) * limit;
+    return HttpResponse.json({
+      data: filtered.slice(start, start + limit),
+      total: filtered.length,
+      page,
+      totalPages: Math.ceil(filtered.length / limit),
     });
+  }),
+
+  // 회원 단건 조회
+  http.get("/api/members/:id", ({ params }) => {
+    const member = mockMembers.find((m) => m.id === params.id);
+    if (!member) return new HttpResponse(null, { status: 404 });
+    return HttpResponse.json(member);
+  }),
+
+  // 회원 수정
+  http.patch("/api/members/:id", async ({ params, request }) => {
+    const body = (await request.json()) as Partial<Member>;
+    const index = mockMembers.findIndex((m) => m.id === params.id);
+    if (index === -1) return new HttpResponse(null, { status: 404 });
+    mockMembers[index] = {
+      ...mockMembers[index],
+      ...body,
+      updatedAt: new Date().toISOString(),
+    };
+    return HttpResponse.json(mockMembers[index]);
+  }),
+
+  // 에러 시뮬레이션
+  http.get("/api/error/500", () => {
+    return new HttpResponse(null, { status: 500 });
   }),
 ];
