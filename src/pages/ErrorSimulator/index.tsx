@@ -46,7 +46,7 @@ export default function ErrorSimulator() {
                   : "bg-red-500 text-white hover:bg-red-600"
               }`}
             >
-              {breakA ? "✅ 위젯 A 복구" : "💥 위젯 A 에러 발생"}
+              {breakA ? "✅ 위젯 A 복구" : "위젯 A 에러 발생"}
             </button>
           </div>
 
@@ -63,7 +63,7 @@ export default function ErrorSimulator() {
                   : "bg-red-500 text-white hover:bg-red-600"
               }`}
             >
-              {breakB ? "✅ 위젯 B 복구" : "💥 위젯 B 에러 발생"}
+              {breakB ? "✅ 위젯 B 복구" : " 위젯 B 에러 발생"}
             </button>
           </div>
 
@@ -80,7 +80,7 @@ export default function ErrorSimulator() {
                   : "bg-red-500 text-white hover:bg-red-600"
               }`}
             >
-              {breakC ? "✅ 위젯 C 복구" : "💥 위젯 C 에러 발생"}
+              {breakC ? "✅ 위젯 C 복구" : " 위젯 C 에러 발생"}
             </button>
           </div>
         </div>
@@ -108,7 +108,7 @@ function GlobalSection() {
   return (
     <div className="space-y-3">
       {/* 전역 Error Boundary 하나로 전체를 감쌈 */}
-      <ErrorBoundary>
+      <ErrorBoundary key={String(breakGlobal)}>
         <div className="grid grid-cols-3 gap-4">
           <BrokenWidget shouldBreak={breakGlobal} label="글로벌 위젯 A" />
           <BrokenWidget shouldBreak={false} label="글로벌 위젯 B" />
@@ -124,9 +124,7 @@ function GlobalSection() {
             : "bg-red-500 text-white hover:bg-red-600"
         }`}
       >
-        {breakGlobal
-          ? "✅ 전체 복구"
-          : "💥 글로벌 위젯 A 에러 발생 (전체 영향)"}
+        {breakGlobal ? "✅ 전체 복구" : " 글로벌 위젯 A 에러 발생 (전체 영향)"}
       </button>
     </div>
   );
