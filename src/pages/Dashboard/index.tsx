@@ -37,7 +37,7 @@ const STATUS_MAP: Record<
 };
 
 export default function Dashboard() {
-  const { data, isLoading, isError } = useOrders(1);
+  const { data, isLoading, isError } = useOrders({ page: 1, status: "", search: "" });
 
   if (isLoading)
     return (

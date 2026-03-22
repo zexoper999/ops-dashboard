@@ -7,7 +7,7 @@ const mockOrders: Order[] = Array.from({ length: 50 }).map(() => ({
   id: faker.string.uuid(),
   customerName: faker.person.fullName(),
   amount: faker.number.int({ min: 10000, max: 200000 }),
-  status: faker.helpers.arrayElement([
+  status: faker.helpers.arrayElement<Order["status"]>([
     "PENDING",
     "CONFIRMED",
     "COMPLETED",
@@ -26,7 +26,7 @@ const mockMembers: Member[] = Array.from({ length: 100 }).map(() => ({
     .birthdate({ min: 20, max: 60, mode: "age" })
     .toISOString()
     .split("T")[0],
-  gender: faker.helpers.arrayElement(["MALE", "FEMALE"]),
+  gender: faker.helpers.arrayElement<"MALE" | "FEMALE">(["MALE", "FEMALE"]),
   grade: faker.helpers.arrayElement<MemberGrade>([
     "VIP",
     "GOLD",
@@ -55,20 +55,44 @@ const mockMembers: Member[] = Array.from({ length: 100 }).map(() => ({
 }));
 
 export const handlers = [
-  // 주문 목록
+  // 주문 목록 (상태 필터 + 고객명 검색 + 페이지네이션)
   http.get("/api/orders", ({ request }) => {
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page")) || 1;
+    const status = url.searchParams.get("status") || "";
+    const search = url.searchParams.get("search") || "";
     const limit = 10;
-    const start = (page - 1) * limit;
-    const paginatedOrders = mockOrders.slice(start, start + limit);
 
+    let filtered = mockOrders;
+    if (status) filtered = filtered.filter((o) => o.status === status);
+    if (search)
+      filtered = filtered.filter((o) =>
+        o.customerName.toLowerCase().includes(search.toLowerCase()),
+      );
+
+    const start = (page - 1) * limit;
     return HttpResponse.json({
-      data: paginatedOrders,
-      total: mockOrders.length,
+      data: filtered.slice(start, start + limit),
+      total: filtered.length,
       page,
-      totalPages: Math.ceil(mockOrders.length / limit),
+      totalPages: Math.ceil(filtered.length / limit),
     });
+  }),
+
+  // 주문 단건 조회
+  http.get("/api/orders/:id", ({ params }) => {
+    const order = mockOrders.find((o) => o.id === params.id);
+    if (!order) return new HttpResponse(null, { status: 404 });
+    return HttpResponse.json(order);
+  }),
+
+  // 주문 상태 변경
+  http.patch("/api/orders/:id", async ({ params, request }) => {
+    const body = (await request.json()) as Partial<Order>;
+    const index = mockOrders.findIndex((o) => o.id === params.id);
+    if (index === -1) return new HttpResponse(null, { status: 404 });
+    mockOrders[index] = { ...mockOrders[index], ...body };
+    return HttpResponse.json(mockOrders[index]);
   }),
 
   // 회원 목록
@@ -80,7 +104,6 @@ export const handlers = [
     const grade = url.searchParams.get("grade") || "";
     const status = url.searchParams.get("status") || "";
 
-    // 필터 적용
     let filtered = mockMembers;
     if (search) {
       filtered = filtered.filter(
