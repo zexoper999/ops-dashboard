@@ -5,7 +5,7 @@ import {
   ArrowUpRight,
   ArrowRight,
 } from "lucide-react";
-import { useOrders } from "@/hooks/useOrders";
+import { useCrudResource } from "@/hooks/useCrudResource";
 import ChartWidget from "@/components/common/ChartWidget";
 import { WidgetErrorBoundary } from "@/components/common/ErrorBoundary";
 import type { Order } from "@/types";
@@ -37,7 +37,8 @@ const STATUS_MAP: Record<
 };
 
 export default function Dashboard() {
-  const { data, isLoading, isError } = useOrders({ page: 1, status: "", search: "" });
+  const { list } = useCrudResource<Order>("orders", { page: 1, status: "", search: "" });
+  const { data, isLoading, isError } = list;
 
   if (isLoading)
     return (
