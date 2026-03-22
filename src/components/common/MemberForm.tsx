@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useUpdateMember } from "@/hooks/useMembers";
-import { useMemberStore } from "@/stores/memberStore";
 import {
   MEMBER_GRADE_OPTIONS,
   MEMBER_STATUS_OPTIONS,
@@ -36,11 +34,17 @@ type MemberFormValues = z.infer<typeof memberSchema>;
 
 interface MemberFormProps {
   member: Member;
+  onUpdate: (data: Partial<Member>) => void;
+  isPending: boolean;
+  onClose: () => void;
 }
 
-export default function MemberForm({ member }: MemberFormProps) {
-  const { closePanel } = useMemberStore();
-  const { mutate: updateMember, isPending } = useUpdateMember();
+export default function MemberForm({
+  member,
+  onUpdate,
+  isPending,
+  onClose,
+}: MemberFormProps) {
 
   // !! React Hook Form 초기화
   const {
@@ -100,16 +104,12 @@ export default function MemberForm({ member }: MemberFormProps) {
       );
       if (!confirmed) return;
     }
-    reset(); // defaultValues로 복구
-    closePanel();
+    reset();
+    onClose();
   };
 
-  // !! 제출 → API 호출 → 캐시 갱신
   const onSubmit = (values: MemberFormValues) => {
-    updateMember(
-      { id: member.id, data: values },
-      { onSuccess: () => closePanel() },
-    );
+    onUpdate(values);
   };
 
   // 공통 input 스타일
