@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useOrders } from "@/hooks/useOrders";
 import ChartWidget from "@/components/common/ChartWidget";
+import { WidgetErrorBoundary } from "@/components/common/ErrorBoundary";
 import type { Order } from "@/types";
 
 const STATUS_MAP: Record<
@@ -90,45 +91,56 @@ export default function Dashboard() {
       {/* 페이지 타이틀 */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900">대시보드</h2>
-        <p className="text-sm text-gray-400 mt-1">운영 현황을 한눈에 확인하세요.</p>
+        <p className="text-sm text-gray-400 mt-1">
+          운영 현황을 한눈에 확인하세요.
+        </p>
       </div>
 
       {/* KPI 카드 */}
+      <WidgetErrorBoundary title="KPI 카드">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {kpiCards.map(({ label, value, unit, trend, icon: Icon, iconBg, iconColor }) => (
-          <div
-            key={label}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-start justify-between hover:shadow-md transition-shadow"
-          >
-            <div>
-              <p className="text-sm text-gray-500 font-medium">{label}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2 tracking-tight">
-                {value}
-                <span className="text-lg font-semibold text-gray-500 ml-1">
-                  {unit}
-                </span>
-              </p>
-              <div className="flex items-center gap-1 mt-3">
-                <ArrowUpRight size={13} className="text-emerald-500" />
-                <span className="text-xs font-medium text-emerald-600">
-                  {trend}
-                </span>
-                <span className="text-xs text-gray-400 ml-0.5">전월 대비</span>
+        {kpiCards.map(
+          ({ label, value, unit, trend, icon: Icon, iconBg, iconColor }) => (
+            <div
+              key={label}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-start justify-between hover:shadow-md transition-shadow"
+            >
+              <div>
+                <p className="text-sm text-gray-500 font-medium">{label}</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2 tracking-tight">
+                  {value}
+                  <span className="text-lg font-semibold text-gray-500 ml-1">
+                    {unit}
+                  </span>
+                </p>
+                <div className="flex items-center gap-1 mt-3">
+                  <ArrowUpRight size={13} className="text-emerald-500" />
+                  <span className="text-xs font-medium text-emerald-600">
+                    {trend}
+                  </span>
+                  <span className="text-xs text-gray-400 ml-0.5">
+                    전월 대비
+                  </span>
+                </div>
+              </div>
+              <div
+                className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}
+              >
+                <Icon size={21} className={iconColor} />
               </div>
             </div>
-            <div
-              className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}
-            >
-              <Icon size={21} className={iconColor} />
-            </div>
-          </div>
-        ))}
+          ),
+        )}
       </div>
+      </WidgetErrorBoundary>
 
       {/* 차트 */}
-      <ChartWidget />
+      <WidgetErrorBoundary title="매출 차트">
+        <ChartWidget />
+      </WidgetErrorBoundary>
 
       {/* 최근 주문 목록 */}
+      <WidgetErrorBoundary title="주문 목록">
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-50">
           <div>
@@ -177,7 +189,9 @@ export default function Dashboard() {
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       {order.amount.toLocaleString()}
-                      <span className="font-normal text-gray-400 ml-0.5 text-xs">원</span>
+                      <span className="font-normal text-gray-400 ml-0.5 text-xs">
+                        원
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -196,6 +210,7 @@ export default function Dashboard() {
           </table>
         </div>
       </div>
+      </WidgetErrorBoundary>
     </div>
   );
 }
