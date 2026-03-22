@@ -1,6 +1,6 @@
 # OPS Dashboard
 
-ERP·CRM 어드민 환경에서 반복되는 CRUD 보일러플레이트를 **제네릭 훅과 범용 컴포넌트**로 추상화한 React+TypeScript 프로젝트입니다.
+ERP·CRM 어드민 환경에서 반복되는 CRUD 보일러플레이트를 **제네릭 훅과 범용 컴포넌트**로 추상화한 React+TypeScript+Vercel 프로젝트입니다.
 
 ---
 
@@ -141,3 +141,25 @@ npm run dev
 ```
 
 > MSW Service Worker(`public/mockServiceWorker.js`)가 포함되어 있어 별도 서버 없이 동작합니다.
+
+---
+
+## 라이브 데모
+
+**[https://ops-dashboard-nine-dusky.vercel.app](https://ops-dashboard-nine-dusky.vercel.app)**
+
+Vercel에 배포되어 있으며 실제 서버 없이 MSW(Mock Service Worker)로 동작합니다.
+
+### 배포 구성
+
+| 항목       | 내용                                                    |
+| ---------- | ------------------------------------------------------- |
+| 플랫폼     | Vercel                                                  |
+| 빌드       | `npm run build` (Vite)                                  |
+| Mock API   | MSW Service Worker — 브라우저에서 직접 요청 인터셉트    |
+| SPA 라우팅 | `vercel.json` rewrite로 모든 경로를 `index.html`로 처리 |
+
+```json
+// vercel.json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+```
