@@ -79,7 +79,7 @@ const mockOrders: Order[] = Array.from({ length: 50 }).map(() => {
 });
 
 // ── 회원 목업 데이터 (1000명) ───────────────────────────────
-const mockMembers: Member[] = Array.from({ length: 12500 }).map(() => {
+const mockMembers: Member[] = Array.from({ length: 17265 }).map(() => {
   const name = krName();
   return {
     id: faker.string.uuid(),

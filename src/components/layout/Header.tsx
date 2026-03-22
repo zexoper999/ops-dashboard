@@ -8,7 +8,7 @@ export default function Header() {
         <Search size={15} className="text-gray-400 shrink-0" />
         <input
           type="text"
-          placeholder="검색"
+          placeholder="무엇이든 검색해보세요"
           className="bg-transparent text-sm text-gray-700 outline-none w-full placeholder-gray-400"
         />
       </div>
