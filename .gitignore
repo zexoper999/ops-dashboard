@@ -29,5 +29,3 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# MSW
-public/mockServiceWorker.js
