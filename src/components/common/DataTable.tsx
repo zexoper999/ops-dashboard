@@ -147,10 +147,11 @@ export function DataTable<T extends object>({
   emptyMessage = "검색 결과가 없습니다.",
 }: DataTableProps<T>) {
   // ColDef → TanStack ColumnDef 변환
+  // index를 prefix로 붙여 동일 key 컬럼이 여러 개일 때 ID 충돌 방지
   const columns = useMemo<ColumnDef<T>[]>(
     () =>
-      colDefs.map((col) => ({
-        id: String(col.key),
+      colDefs.map((col, index) => ({
+        id: `${index}_${String(col.key)}`,
         header: col.header,
         accessorFn: (row: T) =>
           col.type === "actions" ? null : (row[col.key as keyof T] as unknown),

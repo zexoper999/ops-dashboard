@@ -64,7 +64,7 @@ export default function Orders() {
     () => [
       ...BASE_COLUMNS,
       {
-        key: "id",
+        key: "_actions",
         header: "상세",
         type: "actions",
         onAction: (row) => openPanel(row.id),
