@@ -49,6 +49,26 @@ const createSchema = z.object({
 });
 type CreateInput = z.infer<typeof createSchema>;
 
+// ── 개인정보 마스킹 ────────────────────────────────────────────
+
+/** 홍길동 → 홍*동 / 김민준 → 김*준 / 이수아 → 이*아 */
+const maskName = (name: string) => {
+  if (name.length <= 1) return name;
+  if (name.length === 2) return name[0] + "*";
+  return name[0] + "*".repeat(name.length - 2) + name[name.length - 1];
+};
+
+/** example@naver.com → ex****@naver.com */
+const maskEmail = (email: string) => {
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  return `${local.slice(0, 2)}****@${domain}`;
+};
+
+/** 010-1234-5678 → 010-****-5678 */
+const maskPhone = (phone: string) =>
+  phone.replace(/(\d{3})-(\d{4})-(\d{4})/, "$1-****-$3");
+
 // ── 아바타 색상 ────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
@@ -161,13 +181,15 @@ export default function Members() {
               {row.name.charAt(0)}
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-gray-800 text-sm">{row.name}</p>
-              <p className="text-xs text-gray-400 truncate max-w-[160px]">{row.email}</p>
+              <p className="font-semibold text-gray-800 text-sm">{maskName(row.name)}</p>
+              <p className="text-xs text-gray-400 truncate max-w-[160px]">{maskEmail(row.email)}</p>
             </div>
           </div>
         ),
       },
-      { key: "phone",            header: "연락처",    type: "text" },
+      { key: "phone", header: "연락처", type: "text", render: (_v, row) => (
+        <span className="text-gray-800 font-mono text-sm">{maskPhone(row.phone)}</span>
+      )},
       { key: "grade",            header: "등급",      type: "badge", badgeMap: MEMBER_GRADE_BADGE_MAP },
       { key: "status",           header: "상태",      type: "badge", badgeMap: MEMBER_STATUS_BADGE_MAP },
       { key: "totalOrderAmount", header: "총 구매액", type: "currency", sortable: true },
