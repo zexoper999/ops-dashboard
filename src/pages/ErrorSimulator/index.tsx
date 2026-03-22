@@ -35,7 +35,7 @@ export default function ErrorSimulator() {
         <div className="grid grid-cols-3 gap-4">
           {/* 위젯 A */}
           <div className="space-y-2">
-            <WidgetErrorBoundary title="위젯 A">
+            <WidgetErrorBoundary key={String(breakA)} title="위젯 A">
               <BrokenWidget shouldBreak={breakA} label="위젯 A" />
             </WidgetErrorBoundary>
             <button
@@ -52,7 +52,7 @@ export default function ErrorSimulator() {
 
           {/* 위젯 B */}
           <div className="space-y-2">
-            <WidgetErrorBoundary title="위젯 B">
+            <WidgetErrorBoundary key={String(breakB)} title="위젯 B">
               <BrokenWidget shouldBreak={breakB} label="위젯 B" />
             </WidgetErrorBoundary>
             <button
@@ -69,7 +69,7 @@ export default function ErrorSimulator() {
 
           {/* 위젯 C */}
           <div className="space-y-2">
-            <WidgetErrorBoundary title="위젯 C">
+            <WidgetErrorBoundary key={String(breakC)} title="위젯 C">
               <BrokenWidget shouldBreak={breakC} label="위젯 C" />
             </WidgetErrorBoundary>
             <button

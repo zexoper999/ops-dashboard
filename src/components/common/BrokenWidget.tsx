@@ -13,7 +13,7 @@ export default function BrokenWidget({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+    <div className="bg-white border border-gray-200 rounded-lg p-6 text-center min-h-32 flex flex-col items-center justify-center">
       <span className="text-2xl">✅</span>
       <p className="mt-2 text-sm font-medium text-gray-700">
         {label} 정상 동작 중
