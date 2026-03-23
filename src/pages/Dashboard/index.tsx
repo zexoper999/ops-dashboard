@@ -6,6 +6,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useCrudResource } from "@/hooks/useCrudResource";
+import { maskName } from "@/utils/mask";
 import ChartWidget from "@/components/common/ChartWidget";
 import { WidgetErrorBoundary } from "@/components/common/ErrorBoundary";
 import type { Order } from "@/types";
@@ -186,7 +187,7 @@ export default function Dashboard() {
                       #{order.id.slice(0, 8).toUpperCase()}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-800">
-                      {order.customerName}
+                      {maskName(order.customerName)}
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900">
                       {order.amount.toLocaleString()}

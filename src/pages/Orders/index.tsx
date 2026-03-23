@@ -10,6 +10,7 @@ import {
   STATUS_TRANSITIONS,
 } from "@/constants/order";
 import { formatDate, formatAmount } from "@/utils/format";
+import { maskName } from "@/utils/mask";
 import type { Order } from "@/types";
 
 type OrderFilters = { page: number; status: string; search: string };
@@ -17,7 +18,8 @@ type OrderFilters = { page: number; status: string; search: string };
 // 컬럼 정의: ColDef 배열 하나로 TanStack Table 보일러플레이트 대체
 const BASE_COLUMNS: ColDef<Order>[] = [
   { key: "id",           header: "주문 ID",  type: "mono" },
-  { key: "customerName", header: "고객명",   type: "text" },
+  { key: "customerName", header: "고객명", type: "text",
+    render: (_v, row) => <span className="font-medium text-gray-900">{maskName(row.customerName)}</span> },
   { key: "amount",       header: "결제금액", type: "currency" },
   { key: "status",       header: "상태",     type: "badge", badgeMap: ORDER_BADGE_MAP },
   { key: "createdAt",    header: "주문일시", type: "date" },
@@ -159,7 +161,7 @@ function OrderDetail({
         </h4>
         <div className="bg-gray-50 rounded-xl p-4 space-y-3">
           <InfoRow label="주문 ID" value={`#${order.id.slice(0, 8).toUpperCase()}`} mono />
-          <InfoRow label="고객명"  value={order.customerName} />
+          <InfoRow label="고객명"  value={maskName(order.customerName)} />
           <InfoRow label="결제금액" value={formatAmount(order.amount)} />
           <InfoRow label="주문일시" value={formatDate(order.createdAt)} />
         </div>

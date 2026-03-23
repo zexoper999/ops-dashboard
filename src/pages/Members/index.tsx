@@ -49,25 +49,7 @@ const createSchema = z.object({
 });
 type CreateInput = z.infer<typeof createSchema>;
 
-// ── 개인정보 마스킹 ────────────────────────────────────────────
-
-/** 홍길동 → 홍*동 / 김민준 → 김*준 / 이수아 → 이*아 */
-const maskName = (name: string) => {
-  if (name.length <= 1) return name;
-  if (name.length === 2) return name[0] + "*";
-  return name[0] + "*".repeat(name.length - 2) + name[name.length - 1];
-};
-
-/** example@naver.com → ex****@naver.com */
-const maskEmail = (email: string) => {
-  const [local, domain] = email.split("@");
-  if (!domain) return email;
-  return `${local.slice(0, 2)}****@${domain}`;
-};
-
-/** 010-1234-5678 → 010-****-5678 */
-const maskPhone = (phone: string) =>
-  phone.replace(/(\d{3})-(\d{4})-(\d{4})/, "$1-****-$3");
+import { maskName, maskEmail, maskPhone } from "@/utils/mask";
 
 // ── 아바타 색상 ────────────────────────────────────────────────
 
