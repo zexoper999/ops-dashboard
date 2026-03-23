@@ -202,16 +202,16 @@ export default function Members() {
           </button>
           <button
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/30"
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/30"
           >
             <Plus size={15} />
-            회원 등록
+            <span className="hidden md:inline">회원 등록</span>
           </button>
         </div>
       </div>
 
       {/* ── 통계 카드 ── */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard icon={Users}       label="전체 회원"   value={stats?.total     ?? 0} unit="명" color="blue"    />
         <StatCard icon={UserCheck}   label="활성 회원"   value={stats?.active    ?? 0} unit="명" color="emerald" />
         <StatCard icon={Crown}       label="VIP · GOLD" value={stats?.vipGold   ?? 0} unit="명" color="violet"  />

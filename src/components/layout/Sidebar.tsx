@@ -2,18 +2,27 @@ import { NavLink } from "react-router-dom";
 import { Activity } from "lucide-react";
 import { NAV_ITEMS } from "@/constants/navigation";
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
-    <aside className="w-64 bg-slate-900 flex flex-col shrink-0">
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 flex flex-col shrink-0 transition-transform duration-300
+        md:relative md:translate-x-0
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+    >
       {/* 로고 */}
       <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-700/60">
         <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
           <Activity size={17} className="text-white" />
         </div>
         <div>
-          <p className="text-white font-bold text-sm leading-none tracking-wide">
-            OPS
-          </p>
+          <p className="text-white font-bold text-sm leading-none tracking-wide">OPS</p>
           <p className="text-slate-400 text-xs mt-0.5">Dashboard</p>
         </div>
       </div>
@@ -28,6 +37,7 @@ export default function Sidebar() {
             key={path}
             to={path}
             end={path === "/"}
+            onClick={onClose}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
                 isActive
